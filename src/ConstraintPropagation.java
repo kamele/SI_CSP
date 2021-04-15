@@ -9,14 +9,16 @@ public class ConstraintPropagation implements IMethod{
     Node[] nodes;
     ArrayList<ArrayList<int[]>> domainStacks;
     ArrayList<Integer> indexToSearch;
-    IHeuristic heuristic;
+    IOrderHeuristic orderHeuristic;
+    IValueHeuristic valueHeuristic;
 
-    public ArrayList<int[]> solvePoblem(Node[] AllNodes, IHeuristic heuristic){
+    public ArrayList<int[]> solvePoblem(Node[] AllNodes, IOrderHeuristic orderHeuristic,IValueHeuristic valueHeuristic){
 
         result = new ArrayList<>();
         indexToSearch = new ArrayList<>();
         domainStacks= new ArrayList<>();
-        this.heuristic = heuristic;
+        this.orderHeuristic = orderHeuristic;
+        this.valueHeuristic = valueHeuristic;
 
         for(int i = 0; i<AllNodes.length; i++){
             indexToSearch.add(i);
@@ -31,7 +33,7 @@ public class ConstraintPropagation implements IMethod{
     }
 
     public void search(int index){
-            int[] chosedValuesOrder = heuristic.sortedDomein(domainStacks.get(index).get(0));//heuristic
+            int[] chosedValuesOrder = valueHeuristic.sortedDomein(domainStacks.get(index).get(0));//heuristic
             for (int v : chosedValuesOrder) {//zerowa dziedzina ma najnowsze
 
                 nodes[index].setValue(v);
@@ -51,7 +53,7 @@ public class ConstraintPropagation implements IMethod{
                         if(nodes[secondIndex].getValue()==-1){
                             ArrayList<Integer> newDomain = new ArrayList<>();
 
-                            chosedValuesOrder = heuristic.sortedDomein(domainStacks.get(secondIndex).get(0));//heuristic
+                            chosedValuesOrder = valueHeuristic.sortedDomein(domainStacks.get(secondIndex).get(0));//heuristic
                             for(int sd : chosedValuesOrder){
                                 nodes[secondIndex].setValue(sd);
                                 if(constrain.isFulFilled()){
@@ -75,9 +77,9 @@ public class ConstraintPropagation implements IMethod{
                     if (indexToSearch.isEmpty()) {
                         extractSolution();
                     }else {
-                        int nextIndex = heuristic.nextIndex(indexToSearch);
-                        search(nextIndex);
-                        //search(indexToSearch.get(0));
+                        int nextIndex = orderHeuristic.nextIndex(indexToSearch);
+                        //search(nextIndex);
+                        search(indexToSearch.get(0));
                     }
                 }
 

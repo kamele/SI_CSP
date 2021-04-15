@@ -8,13 +8,15 @@ public class AC3 implements IMethod{
     ArrayList<int[]> result;
     Node[] nodes;
     ArrayList<Integer> indexToSearch;
-    IHeuristic heuristic;
+    IOrderHeuristic orderHeuristic;
+    IValueHeuristic valueHeuristic;
 
-    public ArrayList<int[]> solvePoblem(Node[] AllNodes, IHeuristic heuristic){
+    public ArrayList<int[]> solvePoblem(Node[] AllNodes, IOrderHeuristic orderHeuristic,IValueHeuristic valueHeuristic){
 
         result = new ArrayList<>();
         indexToSearch = new ArrayList<>();
-        this.heuristic = heuristic;
+        this.orderHeuristic = orderHeuristic;
+        this.valueHeuristic = valueHeuristic;
 
         for(int i = 0; i<AllNodes.length; i++){
             indexToSearch.add(i);
@@ -91,24 +93,23 @@ public class AC3 implements IMethod{
 
     public void search(int index, Node[]current,ArrayList<int[]> result, ArrayList<Integer> indexToSearch){
 
-        //System.out.println("search ("+index );//+"--------->"+current[index].getDomain().length);
-        if (index == current.length) {
-            extractSolution();
-
-        } else {
-            int[] chosedValuesOrder = heuristic.sortedDomein(current[index].getDomain());
+            int[] chosedValuesOrder = valueHeuristic.sortedDomein(current[index].getDomain());
             for (int v : chosedValuesOrder) {
-                //System.out.println("search (" + index + ")_domain_v = " + v);
                 indexToSearch.remove(new Integer(index));
                 current[index].setValue(v);
 
                 if(current[index].areConstrainsFulfill()){
-                    search(index + 1, current, result,indexToSearch);
+                    if (indexToSearch.isEmpty()) {
+                        extractSolution();
+                    }else{
+                        int nextIndex = orderHeuristic.nextIndex(indexToSearch);
+                        search(nextIndex, current, result,indexToSearch);
+                    }
                 }
                 current[index].setValue(-1);
                 indexToSearch.add(index);
             }
-        }
+
     }
 
 

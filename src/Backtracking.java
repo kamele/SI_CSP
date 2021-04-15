@@ -5,12 +5,14 @@ import java.util.ArrayList;
 public class Backtracking implements IMethod{
 
     ArrayList<Integer> indexToSearch;
-    IHeuristic heuristic;
+    IOrderHeuristic orderHeuristic;
+    IValueHeuristic valueHeuristic;
 
-    public ArrayList<int[]> solvePoblem(Node[] AllNodes,IHeuristic heuristic){
+    public ArrayList<int[]> solvePoblem(Node[] AllNodes,IOrderHeuristic orderHeuristic,IValueHeuristic valueHeuristic){
 
         ArrayList<Node[]> solusion = new ArrayList<>();
-        this.heuristic = heuristic;
+        this.orderHeuristic = orderHeuristic;
+        this.valueHeuristic = valueHeuristic;
 
         indexToSearch = new ArrayList<>();
         for(int i = 0; i<AllNodes.length; i++){
@@ -21,6 +23,7 @@ public class Backtracking implements IMethod{
         solusion= search(0,AllNodes, solusion);
         System.out.println(" Prolem return "+solusion.size()+"  solutions \n");
         ArrayList<int[]> result = new ArrayList<>();
+        result= convertToIntArray(solusion);
         return result;
 
     }
@@ -29,35 +32,27 @@ public class Backtracking implements IMethod{
     public ArrayList<Node[]> search(int index, Node[]current,ArrayList<Node[]> result){
 
 
-        //System.out.println("search ("+index );//+"--------->"+current[index].getDomain().length);
-        if (indexToSearch.isEmpty()) {//(index == current.length) {
-            Node[] newCurrent = copyNodeTab(current);
-            result.add(newCurrent);
-            //System.out.println("return curent" + result.size()+"----------------------------------------------------");
-            /*for (int i = 0; i< result.size();i++){
-                System.out.print("\n"+"S"+i+"   ");
-                for (int j = 0; j< result.get(i).length;j++){
-                    System.out.print(result.get(i)[j].getValue()+", ");
-                }
-            }
-             */
-        } else {
-            int[] chosedValuesOrder = heuristic.sortedDomein(current[index].getDomain());
+            int[] chosedValuesOrder = valueHeuristic.sortedDomein(current[index].getDomain());
             for (int v : chosedValuesOrder) {
                 indexToSearch.remove(new Integer(index));
-                //System.out.println("search (" + index + ")_domain_v = " + v);
-
                 current[index].setValue(v);
+
                 if(current[index].areConstrainsFulfill()){
-                    //System.out.println("return search" + result.size());
-                    //int nextIndex = heuristic.nextIndex(indexToSearch);
-                    //search(nextIndex, current, result);
-                    search(index + 1, current, result);
+                    if (indexToSearch.isEmpty()) {
+                        Node[] newCurrent = copyNodeTab(current);
+                        result.add(newCurrent);
+
+                    }else{
+                        int nextIndex = orderHeuristic.nextIndex(indexToSearch);
+                        search(nextIndex, current, result);
+                        //search(index + 1, current, result);
+                    }
+
                 }
                 current[index].setValue(-1);
                 indexToSearch.add(new Integer(index));
             }
-        }
+
         return result;
     }
 

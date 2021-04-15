@@ -2,19 +2,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Random;
 
-public class RandHeuristic implements IHeuristic {
-    @Override
-    public int nextIndex (ArrayList< Integer > indexList) {
-        Random r = new Random();
-        int nextIndexIndex = r.nextInt(indexList.size());
-        return indexList.get(nextIndexIndex);
-    }
-/*
-    @Override
-    public int nextValue(int[] domain) {
-        return 0;
-    }
-*/
+public class RandValueHeuristic implements IValueHeuristic{
+
     @Override
     public int[] sortedDomein ( int[] domein){
         ArrayList<Integer> valuesToSort = new ArrayList<>();
