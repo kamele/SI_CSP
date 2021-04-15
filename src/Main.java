@@ -20,20 +20,26 @@ public class Main {
         EinsteinRiddle problem1 = new EinsteinRiddle();
         MapColoring problem2 = new MapColoring(3,6,10,10);
 
+        //heuristic
+        IHeuristic neighborheuristic = new NeighborHeuristic();
+        IHeuristic randHeuristic = new RandHeuristic();
+
+
         //Results
+        System.out.println("=======Neighbor Heuristic=======");
         System.out.println("Prolem1 -------------------");
         System.out.println("         Problem.EinsteinRiddle");
 
         System.out.println("backtracking");
-        result=backtracking.solvePoblem(problem1.getAllNodes());
+        result=backtracking.solvePoblem(problem1.getAllNodes(),neighborheuristic);
         //printResult(result);
         result.clear();
         System.out.println("constraintPropagation");
-        result = constraintPropagation.solvePoblem(problem1.getAllNodes());
+        result = constraintPropagation.solvePoblem(problem1.getAllNodes(),neighborheuristic);
         //printResult(result);
         result.clear();
         System.out.println("ac3");
-        result = ac3.solvePoblem(problem1.getAllNodes());
+        result = ac3.solvePoblem(problem1.getAllNodes(),neighborheuristic);
         //printResult(result);
         result.clear();
 
@@ -42,17 +48,53 @@ public class Main {
         System.out.println("         Problem.MapColoring");
 
         System.out.println("backtracking");
-        result=backtracking.solvePoblem(problem2.getAllNodes());
+        result=backtracking.solvePoblem(problem2.getAllNodes(),neighborheuristic);
         //printResult(result);
         result.clear();
         System.out.println("constraintPropagation");
-        result = constraintPropagation.solvePoblem(problem2.getAllNodes());
+        result = constraintPropagation.solvePoblem(problem2.getAllNodes(),neighborheuristic);
         //printResult(result);
         result.clear();
         System.out.println("ac3");
-        result = ac3.solvePoblem(problem2.getAllNodes());
+        result = ac3.solvePoblem(problem2.getAllNodes(),neighborheuristic);
         //printResult(result);
         result.clear();
+
+        System.out.println("=======Rand Heuristic=======");
+        System.out.println("Prolem1 -------------------");
+        System.out.println("         Problem.EinsteinRiddle");
+
+        System.out.println("backtracking");
+        result=backtracking.solvePoblem(problem1.getAllNodes(), randHeuristic);
+        //printResult(result);
+        result.clear();
+        System.out.println("constraintPropagation");
+        result = constraintPropagation.solvePoblem(problem1.getAllNodes(), randHeuristic);
+        //printResult(result);
+        result.clear();
+        System.out.println("ac3");
+        result = ac3.solvePoblem(problem1.getAllNodes(), randHeuristic);
+        //printResult(result);
+        result.clear();
+
+
+        System.out.println("Prolem2 -------------------");
+        System.out.println("         Problem.MapColoring");
+
+        System.out.println("backtracking");
+        result=backtracking.solvePoblem(problem2.getAllNodes(), randHeuristic);
+        //printResult(result);
+        result.clear();
+        System.out.println("constraintPropagation");
+        result = constraintPropagation.solvePoblem(problem2.getAllNodes(), randHeuristic);
+        //printResult(result);
+        result.clear();
+        System.out.println("ac3");
+        result = ac3.solvePoblem(problem2.getAllNodes(), randHeuristic);
+        //printResult(result);
+        result.clear();
+
+
 
     }
 

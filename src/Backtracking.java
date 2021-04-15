@@ -5,15 +5,18 @@ import java.util.ArrayList;
 public class Backtracking implements IMethod{
 
     ArrayList<Integer> indexToSearch;
+    IHeuristic heuristic;
 
-    public ArrayList<int[]> solvePoblem(Node[] AllNodes){
+    public ArrayList<int[]> solvePoblem(Node[] AllNodes,IHeuristic heuristic){
 
         ArrayList<Node[]> solusion = new ArrayList<>();
+        this.heuristic = heuristic;
+
         indexToSearch = new ArrayList<>();
         for(int i = 0; i<AllNodes.length; i++){
             indexToSearch.add(i);
         }
-        indexToSearch.remove(new Integer(0));
+        //indexToSearch.remove(new Integer(0));
 
         solusion= search(0,AllNodes, solusion);
         System.out.println(" Prolem return "+solusion.size()+"  solutions \n");
@@ -23,10 +26,11 @@ public class Backtracking implements IMethod{
     }
 
 
-    public static ArrayList<Node[]> search(int index, Node[]current,ArrayList<Node[]> result){
+    public ArrayList<Node[]> search(int index, Node[]current,ArrayList<Node[]> result){
+
 
         //System.out.println("search ("+index );//+"--------->"+current[index].getDomain().length);
-        if (index == current.length) {
+        if (indexToSearch.isEmpty()) {//(index == current.length) {
             Node[] newCurrent = copyNodeTab(current);
             result.add(newCurrent);
             //System.out.println("return curent" + result.size()+"----------------------------------------------------");
@@ -38,21 +42,26 @@ public class Backtracking implements IMethod{
             }
              */
         } else {
-            for (int v : current[index].getDomain()) {
+            int[] chosedValuesOrder = heuristic.sortedDomein(current[index].getDomain());
+            for (int v : chosedValuesOrder) {
+                indexToSearch.remove(new Integer(index));
                 //System.out.println("search (" + index + ")_domain_v = " + v);
 
                 current[index].setValue(v);
                 if(current[index].areConstrainsFulfill()){
                     //System.out.println("return search" + result.size());
+                    //int nextIndex = heuristic.nextIndex(indexToSearch);
+                    //search(nextIndex, current, result);
                     search(index + 1, current, result);
                 }
                 current[index].setValue(-1);
+                indexToSearch.add(new Integer(index));
             }
         }
         return result;
     }
 
-    private static Node[] copyNodeTab(Node[] oryginal){
+    private Node[] copyNodeTab(Node[] oryginal){
         Node[] copy = new Node[oryginal.length];
         for(int i=0; i< oryginal.length;i++){
             //System.out.println(copy[i]);

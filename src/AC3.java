@@ -8,17 +8,19 @@ public class AC3 implements IMethod{
     ArrayList<int[]> result;
     Node[] nodes;
     ArrayList<Integer> indexToSearch;
+    IHeuristic heuristic;
 
-    public ArrayList<int[]> solvePoblem(Node[] AllNodes){
+    public ArrayList<int[]> solvePoblem(Node[] AllNodes, IHeuristic heuristic){
 
         result = new ArrayList<>();
         indexToSearch = new ArrayList<>();
+        this.heuristic = heuristic;
 
         for(int i = 0; i<AllNodes.length; i++){
             indexToSearch.add(i);
         }
         nodes = AllNodes;
-        search(0,nodes,result);
+        search(0,nodes,result,indexToSearch);
         System.out.println(" Prolem return "+result.size()+"  solutions \n");
         return result;
 
@@ -87,21 +89,24 @@ public class AC3 implements IMethod{
         return true;
     }
 
-    public void search(int index, Node[]current,ArrayList<int[]> result){
+    public void search(int index, Node[]current,ArrayList<int[]> result, ArrayList<Integer> indexToSearch){
 
         //System.out.println("search ("+index );//+"--------->"+current[index].getDomain().length);
         if (index == current.length) {
             extractSolution();
 
         } else {
-            for (int v : current[index].getDomain()) {
+            int[] chosedValuesOrder = heuristic.sortedDomein(current[index].getDomain());
+            for (int v : chosedValuesOrder) {
                 //System.out.println("search (" + index + ")_domain_v = " + v);
-
+                indexToSearch.remove(new Integer(index));
                 current[index].setValue(v);
+
                 if(current[index].areConstrainsFulfill()){
-                    search(index + 1, current, result);
+                    search(index + 1, current, result,indexToSearch);
                 }
                 current[index].setValue(-1);
+                indexToSearch.add(index);
             }
         }
     }

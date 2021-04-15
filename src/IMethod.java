@@ -4,5 +4,6 @@ import java.util.ArrayList;
 
 public interface IMethod {
 
-    public ArrayList<int[]> solvePoblem(Node[] AllNodes);
+
+    public ArrayList<int[]> solvePoblem(Node[] AllNodes, IHeuristic heuristic);
 }

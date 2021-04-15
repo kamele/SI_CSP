@@ -9,12 +9,14 @@ public class ConstraintPropagation implements IMethod{
     Node[] nodes;
     ArrayList<ArrayList<int[]>> domainStacks;
     ArrayList<Integer> indexToSearch;
+    IHeuristic heuristic;
 
-    public ArrayList<int[]> solvePoblem(Node[] AllNodes){
+    public ArrayList<int[]> solvePoblem(Node[] AllNodes, IHeuristic heuristic){
 
         result = new ArrayList<>();
         indexToSearch = new ArrayList<>();
         domainStacks= new ArrayList<>();
+        this.heuristic = heuristic;
 
         for(int i = 0; i<AllNodes.length; i++){
             indexToSearch.add(i);
@@ -29,8 +31,8 @@ public class ConstraintPropagation implements IMethod{
     }
 
     public void search(int index){
-
-            for (int v : domainStacks.get(index).get(0)) {//zerowa dziedzina ma najnowsze
+            int[] chosedValuesOrder = heuristic.sortedDomein(domainStacks.get(index).get(0));//heuristic
+            for (int v : chosedValuesOrder) {//zerowa dziedzina ma najnowsze
 
                 nodes[index].setValue(v);
                 indexToSearch.remove(new Integer(index));
@@ -48,7 +50,9 @@ public class ConstraintPropagation implements IMethod{
 
                         if(nodes[secondIndex].getValue()==-1){
                             ArrayList<Integer> newDomain = new ArrayList<>();
-                            for(int sd : domainStacks.get(secondIndex).get(0)){
+
+                            chosedValuesOrder = heuristic.sortedDomein(domainStacks.get(secondIndex).get(0));//heuristic
+                            for(int sd : chosedValuesOrder){
                                 nodes[secondIndex].setValue(sd);
                                 if(constrain.isFulFilled()){
                                     newDomain.add(sd);
@@ -71,7 +75,9 @@ public class ConstraintPropagation implements IMethod{
                     if (indexToSearch.isEmpty()) {
                         extractSolution();
                     }else {
-                        search(indexToSearch.get(0));
+                        int nextIndex = heuristic.nextIndex(indexToSearch);
+                        search(nextIndex);
+                        //search(indexToSearch.get(0));
                     }
                 }
 
