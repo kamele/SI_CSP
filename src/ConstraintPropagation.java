@@ -12,7 +12,13 @@ public class ConstraintPropagation implements IMethod{
     IOrderHeuristic orderHeuristic;
     IValueHeuristic valueHeuristic;
 
-    public ArrayList<int[]> solvePoblem(Node[] AllNodes, IOrderHeuristic orderHeuristic,IValueHeuristic valueHeuristic){
+    ResultAnalysis resultAnalysis;//Analysis
+
+    public ArrayList<int[]> solvePoblem(Node[] AllNodes, IOrderHeuristic orderHeuristic,IValueHeuristic valueHeuristic, String fileName){
+
+        resultAnalysis = new ResultAnalysis();//Analysis
+        resultAnalysis.setStartTime(System.nanoTime());//Analysis
+        resultAnalysis.setMethodName("ConstraintPropagation");//Analysis
 
         result = new ArrayList<>();
         indexToSearch = new ArrayList<>();
@@ -28,11 +34,18 @@ public class ConstraintPropagation implements IMethod{
         nodes = AllNodes;
         search(0);
         System.out.println(" Prolem return "+result.size()+"  solutions \n");
-        return result;
 
+        resultAnalysis.setEndTime(System.nanoTime());//Analysis
+        resultAnalysis.setResult(result);//Analysis
+        resultAnalysis.printResultAnalysis();//Analysis
+        resultAnalysis.saveToFile(fileName);//Analysis
+
+        return result;
     }
 
     public void search(int index){
+            resultAnalysis.increasOneAllNodeNumbers();//Analysis
+
             int[] chosedValuesOrder = valueHeuristic.sortedDomein(domainStacks.get(index).get(0));//heuristic
             for (int v : chosedValuesOrder) {//zerowa dziedzina ma najnowsze
 
@@ -76,6 +89,9 @@ public class ConstraintPropagation implements IMethod{
                 if(!isGoingBack ){
                     if (indexToSearch.isEmpty()) {
                         extractSolution();
+                        if(result.size()==1){//Analysis
+                            resultAnalysis.setFirstResultTime(System.nanoTime());//Analysis
+                        }//Analysis
                     }else {
                         int nextIndex = orderHeuristic.nextIndex(indexToSearch);
                         //search(nextIndex);

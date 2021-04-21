@@ -10,8 +10,10 @@ import java.util.Random;
 public class MapColoring {
 
     private Node[] AllNodes;
+    private int numberofPoints;
 
     public MapColoring(int numberOfColors, int numberofPoints,int maxX, int maxY) {
+        this.numberofPoints=numberofPoints;
         //color domain for nodes
         int[] domain=new int[numberOfColors];
         for(int i=0;i<numberOfColors;i++){
@@ -328,5 +330,11 @@ public class MapColoring {
         return AllNodes;
     }
 
+    public int getNumberofPoints() {
+        return numberofPoints;
+    }
 
+    public void setNumberofPoints(int numberofPoints) {
+        this.numberofPoints = numberofPoints;
+    }
 }

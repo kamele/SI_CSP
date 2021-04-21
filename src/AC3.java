@@ -10,8 +10,13 @@ public class AC3 implements IMethod{
     ArrayList<Integer> indexToSearch;
     IOrderHeuristic orderHeuristic;
     IValueHeuristic valueHeuristic;
+    ResultAnalysis resultAnalysis;//Analysis
 
-    public ArrayList<int[]> solvePoblem(Node[] AllNodes, IOrderHeuristic orderHeuristic,IValueHeuristic valueHeuristic){
+    public ArrayList<int[]> solvePoblem(Node[] AllNodes, IOrderHeuristic orderHeuristic,IValueHeuristic valueHeuristic, String fileName){
+
+        resultAnalysis = new ResultAnalysis();//Analysis
+        resultAnalysis.setStartTime(System.nanoTime());//Analysis
+        resultAnalysis.setMethodName("AC3");//Analysis
 
         result = new ArrayList<>();
         indexToSearch = new ArrayList<>();
@@ -24,6 +29,12 @@ public class AC3 implements IMethod{
         nodes = AllNodes;
         search(0,nodes,result,indexToSearch);
         System.out.println(" Prolem return "+result.size()+"  solutions \n");
+
+        resultAnalysis.setEndTime(System.nanoTime());//Analysis
+        resultAnalysis.setResult(result);//Analysis
+        resultAnalysis.printResultAnalysis();//Analysis
+        resultAnalysis.saveToFile(fileName);//Analysis
+
         return result;
 
     }
@@ -92,6 +103,7 @@ public class AC3 implements IMethod{
     }
 
     public void search(int index, Node[]current,ArrayList<int[]> result, ArrayList<Integer> indexToSearch){
+            resultAnalysis.increasOneAllNodeNumbers();//Analysis
 
             int[] chosedValuesOrder = valueHeuristic.sortedDomein(current[index].getDomain());
             for (int v : chosedValuesOrder) {
@@ -101,6 +113,10 @@ public class AC3 implements IMethod{
                 if(current[index].areConstrainsFulfill()){
                     if (indexToSearch.isEmpty()) {
                         extractSolution();
+
+                        if(result.size()==1){//Analysis
+                            resultAnalysis.setFirstResultTime(System.nanoTime());//Analysis
+                        }//Analysis
                     }else{
                         int nextIndex = orderHeuristic.nextIndex(indexToSearch);
                         search(nextIndex, current, result,indexToSearch);
